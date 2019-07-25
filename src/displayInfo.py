@@ -9,17 +9,13 @@ class monitor:
     x = y = None
 
 class xrandr:
-
     def getRand(self):
         return bash.execLine('xrandr')
-
     def getXdpy(self):
         q = bash.exec('xdpyinfo -ext XINERAMA')
         q =  re.findall('(head #[0-9]): [0-9]+x[0-9]+ @ ([0-9]+,[0-9]+)', str(q))
 
-
         arr = []
-
         w=0
         for e in q:
             a = []
@@ -28,8 +24,8 @@ class xrandr:
             arr.append(a)
             w = w+1
 
-
         return arr
+
     def unSignSplit(array):
         arrSpt = array.splitlines()
 
@@ -96,18 +92,17 @@ class xrandr:
                map.append(s)
         return map
 
+	#Return parsed names[] from EDID 
     def listConnect(self):
         r = self.getRand()
         dpy = self.getXdpy()
 
-        self.__monitors = []
+        monitors = []
         ret = self.map(r, b'.*[^dis]connected')
 
         for s in ret:
             res = re.findall('[\S]+\s', s.decode())
-            
             for obj in re.findall('[0-9]+x[0-9]+[^\+\s]', s.decode()):
-                
                 o = re.findall('[0-9]+',obj)
                 width = o[0]
                 height = o[1]
@@ -127,12 +122,8 @@ class xrandr:
                 'x': position[0],
                 'y': position[1]
             }
-
-
-
-            self.__monitors.append(monitor)
-
-        return self.__monitors
+            monitors.append(monitor)
+        return monitors
     def workArea(self):
         r = self.getRand()
         ret = self.map(r, b'.*Screen \d')
@@ -155,7 +146,5 @@ class xrandr:
                 'max' : { 'w': max[0], 'h': max[1]}
             }
             screens.append(screen)
+            
         return screens
-
-#x = xrandr()
-#x.listConnect()
